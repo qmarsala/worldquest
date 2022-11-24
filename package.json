@@ -1,0 +1,20 @@
+{
+  "name": "worldquest-discord",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "itty-router": "^2.5.1",
+    "discord-interactions": "^3.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20221111.1",
+    "node-fetch": "^3.2.2",
+    "wrangler": "2.4.2"
+  },
+  "scripts": {
+    "start": "wrangler dev",
+    "register": "node src/register.js",
+    "deploy": "wrangler publish"
+  }
+}
