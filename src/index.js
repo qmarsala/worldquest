@@ -1,6 +1,6 @@
-import { InteractionResponseType, InteractionType } from "discord-interactions";
-import { Router } from "itty-router";
-import { validateDiscordRequest } from "./request-validator.js";
+import { InteractionResponseType, InteractionType } from 'discord-interactions';
+import { Router } from 'itty-router';
+import { validateDiscordRequest } from './request-validator.js';
 
 class JsonResponse extends Response {
     constructor(body, init) {
@@ -15,7 +15,7 @@ class JsonResponse extends Response {
 }
 
 const router = Router();
-router.post("/interactions", async (request, env) => {
+router.post('/interactions', async (request, env) => {
     const isValidRequest = await validateDiscordRequest(request, env);
     if (!isValidRequest) {
         console.error('Invalid Request');
@@ -30,9 +30,10 @@ router.post("/interactions", async (request, env) => {
             type: InteractionResponseType.PONG,
         });
     }
-    return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
+
+    return new JsonResponse({ type: 3, content: 'Hell, World!' }, { status: 200 });
 });
-router.all("*", () => new Response("Not found!", { status: 404 }));
+router.all('*', () => new Response('Not found!', { status: 404 }));
 
 export default {
     async fetch(request, env, ctx) {
