@@ -1,18 +1,8 @@
-import { InteractionResponseType, InteractionType } from 'discord-interactions';
+import { InteractionResponseType, InteractionType, ButtonStyleTypes } from 'discord-interactions';
 import { Router } from 'itty-router';
-import { validateDiscordRequest } from './request-validator.js';
-
-class JsonResponse extends Response {
-    constructor(body, init) {
-        const jsonBody = JSON.stringify(body);
-        init = init || {
-            headers: {
-                'content-type': 'application/json;charset=UTF-8',
-            },
-        };
-        super(jsonBody, init);
-    }
-}
+import { validateDiscordRequest } from './lib/discord/request-validator.js';
+import { MessageResponse, ButtonsResponse } from './lib/discord/responses.js';
+import { Button, ButtonComponent } from './lib/discord/components.js';
 
 const router = Router();
 router.post('/interactions', async (request, env) => {
@@ -31,7 +21,16 @@ router.post('/interactions', async (request, env) => {
         });
     }
 
-    return new JsonResponse({ type: 3, content: 'Hell, World!' }, { status: 200 });
+    if (message.type === InteractionType.MESSAGE_COMPONENT) {
+        console.log('Handling message component request');
+        return new MessageResponse(`${message.member.user.username ?? "somebody"} clicked me! ${message.data.custom_id}.`)
+    }
+    const button = new ButtonComponent("new_button", "Button 1");
+    button.components.push(new Button("test", "testing"));
+    const button2 = new ButtonComponent("new_button_2", "Button 2", ButtonStyleTypes.DANGER);
+    button2.components.push(new Button("test_1", "also testing", ButtonStyleTypes.SUCCESS));
+    const response = new ButtonsResponse('This is testing components!', [button, button2]);
+    return response;
 });
 router.all('*', () => new Response('Not found!', { status: 404 }));
 

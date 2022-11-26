@@ -1,0 +1,6 @@
+post https://worldquest-discord.qmarsala.workers.dev/interactions
+Content-Type: application/json
+
+{
+
+}
