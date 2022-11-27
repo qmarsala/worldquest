@@ -1,4 +1,4 @@
-import { TEST_COMMAND } from './commands.js';
+import { commands } from './discord/commands.js';
 import fetch from 'node-fetch';
 
 const token = process.env.DISCORD_TOKEN;
@@ -25,7 +25,7 @@ const registerCommands = async (url) => {
       Authorization: `Bot ${token}`,
     },
     method: 'PUT',
-    body: JSON.stringify([TEST_COMMAND]),
+    body: JSON.stringify([...commands]),
   });
 
   if (response.ok) {

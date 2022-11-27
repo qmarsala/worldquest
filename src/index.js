@@ -1,8 +1,10 @@
 import { InteractionResponseType, InteractionType, ButtonStyleTypes } from 'discord-interactions';
 import { Router } from 'itty-router';
-import { validateDiscordRequest } from './lib/discord/request-validator.js';
-import { MessageResponse, ButtonsResponse } from './lib/discord/responses.js';
-import { Button, ButtonComponent } from './lib/discord/components.js';
+import { validateDiscordRequest } from './discord/request-validator.js';
+import { MessageResponse, ButtonsResponse } from './discord/responses.js';
+import { Button, ButtonComponent } from './discord/components.js';
+import { ACT_COMMAND } from './discord/commands.js';
+
 
 const router = Router();
 router.post('/interactions', async (request, env) => {
@@ -25,6 +27,17 @@ router.post('/interactions', async (request, env) => {
         console.log('Handling message component request');
         return new MessageResponse(`${message.member.user.username ?? "somebody"} clicked me! ${message.data.custom_id}.`)
     }
+
+    if (message.type === InteractionType.APPLICATION_COMMAND
+        && message.data.name === ACT_COMMAND.name) {
+        const action = message.data.options.find(o => o.name === "action").value;
+        const target = message.data.options.find(o => o.name === "target").value ?? "nothing";
+        if (action === undefined) {
+            return new Response("Bad Request.", { status: 400 });
+        }
+        return new MessageResponse(`you ${action} at ${target}`);
+    }
+
     const button = new ButtonComponent("new_button", "Button 1");
     button.components.push(new Button("test", "testing"));
     const button2 = new ButtonComponent("new_button_2", "Button 2", ButtonStyleTypes.DANGER);
